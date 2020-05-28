@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/public.css">
+    <link rel="stylesheet" href="./css/font-awesome.min.css">
+    <link rel="stylesheet" href="./css/e-commerce_product.css">
+<link href="https://cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.js"></script>
+    <script src="js/jquery-3.4.1.min.js"></script>
+    
+</head>
+
+<body>
+	<input type="hidden" th:value="${count}" id="count"/>
+	<input type="hidden" th:value="${pageSize}" id="pageSize"/>
+	<input type="hidden" th:value="${pageStart}" id="pageStart"/>
+	<input type="hidden" th:value="${name}" id="name"/>
+	<input type="hidden" th:value="${findMode}" id="findMode"/>
+	<input type="hidden" th:value="${orderByClause}" id="orderByClause"/>
+    <div class="headder-top">
+        <div class="width1200 headder-top-content">
+            <div><span style="font-size:14px" class="username" th:value="${session.username}" th:text="${session.username}"></span>
+            	<input type="hidden" class="memberId" th:value="${session.memberId}">欢迎来到信达！
+            	<span class="user-quit">[退出]</span>
+            </div>
+            <ul>
+                <li>
+                	<span class="gotoe-commerce_shoping-car"><i class="fa fa-shopping-cart fa-lg"></i>
+                        购物车<span class="cartnum" th:value="${session.cartnum}" th:text="${session.cartnum}"><span th:if="${session.cartnum == null}">0</span></span>件</span></li>
+                <li> 
+                	<span class="gotoe-commerce_order">
+                		<i class="fa fa-file-text-o fa-lg"></i><span class="myOrder">我的订单</span>
+                	</span>
+                </li>
+                <li>服务商入口</li>
+            </ul>
+        </div>
+    </div>
+    <div class="logo-search width1200">
+        <img class="logo" src="./images/logo-blue.png" />
+        <ul class="search">
+            <li>
+                <span class="search-product font-aqua"><input type="hidden" class="selectType" value="selectByProviderName">产品</span>丨
+                <span class="search-service"><input type="hidden" class="selectType" value="selectByServiceName">服务商</span>
+            </li>
+            <li>
+                <input placeholder="搜索您需要的服务或服务商" class="select-name" type="text"><span class="search-btn"><i
+class="fa fa-search fa-2x"></i></span>
+            </li>
+            <li>
+                热门服务：<span>社保开户</span> <span>公司注册</span>
+            </li>
+        </ul>
+        <img class="tel" src="./images/xinda-tel.png" alt="">
+    </div>
+    <ul class="banner width1200">
+        <li><a href="selectByProviderName" class="border-b">全部产品</a></li>
+        <li><a href="#">财税服务</a></li>
+        <li><a href="#">公司工商</a></li>
+        <li><a href="#">人事外包</a></li>
+        <li><a href="#">加盟我们</a></li>
+        <li><a href="#">店铺</a></li>
+    </ul>
+    <div class="line-aqua"></div>
+    <div class="content width1200" th:if="${count} eq '0'">
+    	<h3 style="margin-top:20px">未查询到信息</h3>
+    </div>
+    <div class="content width1200" th:if="${count} gt '0'">
+        <ul class="content-nav">
+            <li class="nav-active"><input type="hidden" value="0">综合排序</li>
+            <li><input type="hidden" value="1">价格 <i class="fa fa-arrows-v fa-lg"></i></li>
+        </ul>
+        <ul class="content-title">
+            <li>商品</li>
+            <li>价格</li>
+        </ul>
+        <hr color="#ededed" size="1">
+        <div class="showData">
+        	<div class="article" th:each="p:${providerProductList}">
+        		
+            	<img th:src="${p.serviceImg}" alt=""/>
+            	<ul class="article-info">
+                	<li th:text="${p.serviceName}"></li>
+           			<li th:text="${p.serviceInfo}"></li>
+                	<li th:text="${p.providerName}"></li>
+            	</ul>
+            	<ul class="article-price">
+                	<li th:text="${p.price}"></li>
+                	<li>
+                		<input type="hidden" class="addIntoCartPost" th:value="${p.id}">
+                    	<span class="payForService">立即购买</span>
+                    	<span class="addIntoCart">加入购物车</span>
+                	</li>
+            	</ul>
+            	<hr color="#ededed" size="1">
+        	</div>
+        	<hr color="#ededed" size="1">
+        	<div class="center" th:with="pageNext=${pageStart}+${pageSize},pagePre=${pageStart}-${pageSize},
+					modelPage=${count}%${pageSize},lastPage=${count}-${pageSize},lastPage2=${count}-${modelPage}"><!-- th:style  pageL=${count}-${count}%${pageSize} -->
+				<ul class="pagination"><!-- th:each -->
+					<li><a th:href="@{${findMode} + '?pageStart=' + 0 + '&name=' + ${name} +'&orderByClause=' + ${orderByClause}}">首页</a></li>
+					<li><span th:if="${pagePre} ge '0'"><a th:href="@{${findMode} +'?pageStart=' + ${pagePre}+ '&name=' + ${name} +'&orderByClause=' + ${orderByClause}}">«</a></span></li>
+					<li><div id="mydiv"></div></li>
+					<li><span th:if="${pageNext} lt ${count}"><a th:href="@{${findMode} + '?pageStart=' + ${pageNext}+ '&name=' + ${name} +'&orderByClause=' + ${orderByClause}}">»</a></span></li>
+					<li><span th:if="${modelPage} eq '0'"><a th:href="@{${findMode} + '?pageStart=' + ${lastPage}+ '&name=' + ${name} +'&orderByClause=' + ${orderByClause}}">末页</a></span></li><!-- eq0 -->
+					<li><span th:if="${modelPage} ne '0'"><a th:href="@{${findMode} + '?pageStart=' + ${lastPage2}+ '&name=' + ${name} +'&orderByClause=' + ${orderByClause}}">末页</a></span></li>
+				</ul>
+			</div>
+        </div>
+    </div>
+    <script src="./js/public.js"></script>
+    <script src="./js/e-commerce_product.js"></script>
+</body>
+
+</html>

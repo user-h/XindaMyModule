@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.BusinessOrderMapper">
+  <resultMap id="BaseResultMap" type="com.example.model.BusinessOrder">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="BUSINESS_NO" jdbcType="VARCHAR" property="businessNo" />
+    <result column="SERVER_ID" jdbcType="VARCHAR" property="serverId" />
+    <result column="BUYNUM" jdbcType="INTEGER" property="buynum" />
+    <result column="ORDER_INFO" jdbcType="VARCHAR" property="orderInfo" />
+    <result column="STATUS" jdbcType="INTEGER" property="status" />
+    <result column="TOTAL_PRICE" jdbcType="INTEGER" property="totalPrice" />
+    <result column="PAY_TYPE" jdbcType="INTEGER" property="payType" />
+    <result column="MEMBER_ID" jdbcType="VARCHAR" property="memberId" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    ID, BUSINESS_NO, SERVER_ID, BUYNUM, ORDER_INFO, STATUS, TOTAL_PRICE, PAY_TYPE, MEMBER_ID, 
+    CREATE_TIME
+  </sql>
+  
+  <!-- start  -->
+  
+  <select id="selectUnpaidOrder" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select
+	<include refid="Base_Column_List" />
+	from business_order
+  	<where>
+  		<if test="serviceId != null and serviceId != '' ">
+  			and SERVER_ID = #{serviceId,jdbcType=VARCHAR}
+  		</if>
+  		<if test="memberId != null and memberId != '' ">
+  			and MEMBER_ID = #{memberId,jdbcType=VARCHAR}
+  		</if>
+  		and STATUS = 0
+  	</where>
+  </select>
+  
+  <select id="selectOrderByMemberId" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from business_order
+    <where>
+    	MEMBER_ID = #{memberId,jdbcType=VARCHAR}
+    </where>
+  </select>
+  
+  <select id="selectLikeByOrderId" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select
+    <!-- <if test="distinct">
+      distinct
+    </if> -->
+    <include refid="Base_Column_List" />
+    from business_order
+    <where>
+    	MEMBER_ID = #{memberId,jdbcType=VARCHAR}
+    	<if test="orderId != null and orderId !='' ">
+    		AND ID LIKE CONCAT('%',#{orderId},'%')
+    	</if>
+    	<if test="beginDate != null and beginDate !='' ">
+    		AND create_time <![CDATA[>=]]> #{beginDate,jdbcType=VARCHAR}
+    	</if>
+    	<if test="endDate != null and endDate !='' ">
+    		AND create_time <![CDATA[<=]]> #{endDate,jdbcType=VARCHAR}
+    	</if>
+    </where>
+  </select>
+  
+  <insert id="insertSelective" parameterType="com.example.model.BusinessOrder">
+    insert into business_order
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="businessNo != null">
+        BUSINESS_NO,
+      </if>
+      <if test="serverId != null">
+        SERVER_ID,
+      </if>
+      <if test="buynum != null">
+        BUYNUM,
+      </if>
+      <if test="orderInfo != null">
+        ORDER_INFO,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="totalPrice != null">
+        TOTAL_PRICE,
+      </if>
+      <if test="payType != null">
+        PAY_TYPE,
+      </if>
+      <if test="memberId != null">
+        MEMBER_ID,
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="businessNo != null">
+        #{businessNo,jdbcType=VARCHAR},
+      </if>
+      <if test="serverId != null">
+        #{serverId,jdbcType=VARCHAR},
+      </if>
+      <if test="buynum != null">
+        #{buynum,jdbcType=INTEGER},
+      </if>
+      <if test="orderInfo != null">
+        #{orderInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="totalPrice != null">
+        #{totalPrice,jdbcType=INTEGER},
+      </if>
+      <if test="payType != null">
+        #{payType,jdbcType=INTEGER},
+      </if>
+      <if test="memberId != null">
+        #{memberId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <!--  -->
+  
+  <select id="selectByExample" parameterType="com.example.model.BusinessOrderExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from business_order
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from business_order
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from business_order
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.example.model.BusinessOrderExample">
+    delete from business_order
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.example.model.BusinessOrder">
+    insert into business_order (ID, BUSINESS_NO, SERVER_ID, 
+      BUYNUM, ORDER_INFO, STATUS, 
+      TOTAL_PRICE, PAY_TYPE, MEMBER_ID, 
+      CREATE_TIME)
+    values (#{id,jdbcType=VARCHAR}, #{businessNo,jdbcType=VARCHAR}, #{serverId,jdbcType=VARCHAR}, 
+      #{buynum,jdbcType=INTEGER}, #{orderInfo,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
+      #{totalPrice,jdbcType=INTEGER}, #{payType,jdbcType=INTEGER}, #{memberId,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <select id="countByExample" parameterType="com.example.model.BusinessOrderExample" resultType="java.lang.Long">
+    select count(*) from business_order
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update business_order
+    <set>
+      <if test="record.id != null">
+        ID = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.businessNo != null">
+        BUSINESS_NO = #{record.businessNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.serverId != null">
+        SERVER_ID = #{record.serverId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.buynum != null">
+        BUYNUM = #{record.buynum,jdbcType=INTEGER},
+      </if>
+      <if test="record.orderInfo != null">
+        ORDER_INFO = #{record.orderInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null">
+        STATUS = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.totalPrice != null">
+        TOTAL_PRICE = #{record.totalPrice,jdbcType=INTEGER},
+      </if>
+      <if test="record.payType != null">
+        PAY_TYPE = #{record.payType,jdbcType=INTEGER},
+      </if>
+      <if test="record.memberId != null">
+        MEMBER_ID = #{record.memberId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update business_order
+    set ID = #{record.id,jdbcType=VARCHAR},
+      BUSINESS_NO = #{record.businessNo,jdbcType=VARCHAR},
+      SERVER_ID = #{record.serverId,jdbcType=VARCHAR},
+      BUYNUM = #{record.buynum,jdbcType=INTEGER},
+      ORDER_INFO = #{record.orderInfo,jdbcType=VARCHAR},
+      STATUS = #{record.status,jdbcType=INTEGER},
+      TOTAL_PRICE = #{record.totalPrice,jdbcType=INTEGER},
+      PAY_TYPE = #{record.payType,jdbcType=INTEGER},
+      MEMBER_ID = #{record.memberId,jdbcType=VARCHAR},
+      CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.model.BusinessOrder">
+    update business_order
+    <set>
+      <if test="businessNo != null">
+        BUSINESS_NO = #{businessNo,jdbcType=VARCHAR},
+      </if>
+      <if test="serverId != null">
+        SERVER_ID = #{serverId,jdbcType=VARCHAR},
+      </if>
+      <if test="buynum != null">
+        BUYNUM = #{buynum,jdbcType=INTEGER},
+      </if>
+      <if test="orderInfo != null">
+        ORDER_INFO = #{orderInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="totalPrice != null">
+        TOTAL_PRICE = #{totalPrice,jdbcType=INTEGER},
+      </if>
+      <if test="payType != null">
+        PAY_TYPE = #{payType,jdbcType=INTEGER},
+      </if>
+      <if test="memberId != null">
+        MEMBER_ID = #{memberId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.model.BusinessOrder">
+    update business_order
+    set BUSINESS_NO = #{businessNo,jdbcType=VARCHAR},
+      SERVER_ID = #{serverId,jdbcType=VARCHAR},
+      BUYNUM = #{buynum,jdbcType=INTEGER},
+      ORDER_INFO = #{orderInfo,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=INTEGER},
+      TOTAL_PRICE = #{totalPrice,jdbcType=INTEGER},
+      PAY_TYPE = #{payType,jdbcType=INTEGER},
+      MEMBER_ID = #{memberId,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

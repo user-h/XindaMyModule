@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.ComovementMapper">
+	<select id="findProvince" resultType="com.example.model.Comovement">
+		select * from province
+	</select>
+	<select id="findCity" parameterType="String" resultType="com.example.model.Comovement">
+		select * from province,city where ci_pr = pr_id and pr_name=#{pr_name}
+	</select>
+	<select id="findCounty" parameterType="String" resultType="com.example.model.Comovement">
+		select * from city,county where co_ci = ci_id and ci_name=#{ci_name}
+	</select>
+</mapper>

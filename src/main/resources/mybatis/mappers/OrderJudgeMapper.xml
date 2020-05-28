@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.OrderJudgeMapper">
+	<resultMap type="com.example.model.BusinessOrder" id="OrderJudgeMap">
+		<id property="id" column="bid" />
+    	<result column="SERVER_ID" jdbcType="VARCHAR" property="serverId" />
+    	<result column="ORDER_INFO" jdbcType="VARCHAR" property="orderInfo" />
+    	<result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    	<!-- association ：配置一对一属性 -->
+		<!-- property:实体类中里面的  属性名 -->
+		<!-- javaType:属性类型 -->
+		<association property="serviceJudge" javaType="com.example.model.ServiceJudge">
+			<id property="id" column="sid" />
+			<result column="ORDER_ID" jdbcType="VARCHAR" property="orderId" />
+    		<result column="CONTENT" jdbcType="VARCHAR" property="content" />
+    		<result column="TYPE" jdbcType="INTEGER" property="type" />
+    		<result column="STATUS" jdbcType="INTEGER" property="status" />
+		</association>
+	</resultMap>
+	<select id="selectOrderJudge" parameterType="java.lang.String" resultMap="OrderJudgeMap">
+		<!--SELECT b.id bid,SERVER_ID,ORDER_INFO,CREATE_TIME,s.id sid,ORDER_ID,CONTENT,TYPE,s.STATUS
+			FROM business_order b
+			LEFT JOIN service_judge s ON b.id=ORDER_ID
+			WHERE b.id=ORDER_ID -->
+		SELECT b.id bid,SERVER_ID,ORDER_INFO,CREATE_TIME,s.id sid,ORDER_ID,CONTENT,TYPE,s.STATUS
+		FROM business_order b
+		LEFT JOIN service_judge s ON b.id=ORDER_ID
+		WHERE b.id=ORDER_ID and s.STATUS=#{status} and s.MEMBER_ID = #{memberId}
+	</select>
+</mapper>

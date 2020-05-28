@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<link rel="stylesheet" href="./css/e-commerce_add_evaluation.css">
+<script src="./js/jquery-3.4.1.min.js"></script>
+
+</head>
+<body>
+	<div class="masking">
+	<div class="scroller">
+		<ul>
+			<li>
+				<span class="left">订单号：</span>
+				<span th:text="${businessOrder.id}"></span>
+				<input type="hidden" class="judgeId" th:value="${judgeId}" title="评价id">
+			</li>
+			<li>
+				<span class="left">服务id：</span>
+				<span style="width:200px" th:text="${businessOrder.serverId}" ></span>
+			</li>
+			<li>
+				<span class="left">订单介绍：</span>
+				<span style="width:200px" th:text="${businessOrder.orderInfo}"></span>
+			</li>
+			<li>
+				<span class="left">总金额：</span>
+				<span th:text="${businessOrder.totalPrice}"></span>
+			</li>
+			<li>
+				<span class="left">创建时间：</span>
+				<span class="createtime" th:text="${businessOrder.createTime}"></span>
+			</li>
+			<li>
+				<span class="left">评价：</span>
+				<span class="sty">好评</span><input type="radio" name="evaluate" value="1" title="好评">
+				<span class="sty">中评</span><input type="radio" name="evaluate" value="2" title="中评">
+				<span class="sty">差评</span><input type="radio" name="evaluate" value="3" title="差评">
+			</li>
+			<li>
+				<span class="ver-top">评价信息：</span>
+				<textarea class="evaluateMessage" rows="7" cols="45"></textarea>
+			</li>
+			<li>
+				<button class="cancel" onclick="history.back(-1)">返回</button>
+				<button class="save">保存</button>
+			</li>
+		</ul>
+	</div>
+	</div>
+	<script src="./js/e-commerce_add_evaluation.js"></script>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/public.css">
+    <link rel="stylesheet" href="./css/header.css">
+    <link rel="stylesheet" href="./css/operator_product.css">
+    <link rel="stylesheet" href="./css/font-awesome.min.css">
+    <link rel="stylesheet" href="./css/element-ui_2.12.0.css">
+
+    <script src="./js/jquery-3.4.1.min.js"></script>
+    <style>
+    .gradientTable {
+        width: 1000px;
+        padding: 20px 20px;
+        border-spacing: 0px;
+    }
+    .gradientTable caption{
+        font-size:x-large;
+    }
+    .gradientTable th {
+        
+        font: bold 15px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+        color: #4f6b72;
+        border-right: 1px solid #C1DAD7;
+        border-bottom: 1px solid #C1DAD7;
+        border-top: 1px solid #C1DAD7;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        text-align: center;
+        padding: 6px 6px 6px 12px;
+        background-color: #CAE8EA;
+        /*background: #CAE8EA url(/images/bg_header.jpg) no-repeat;*/
+    }
+ 
+        .gradientTable th.nobg {
+            border-top: 0;
+            border-left: 0;
+            border-right: 1px solid #C1DAD7;
+            background: none;
+            
+        }
+ 
+    .gradientTable td {
+        border-right: 1px solid #C1DAD7;
+        border-bottom: 1px solid #C1DAD7;
+        font-size: 11px;
+        padding: 6px 6px 6px 12px;
+        color: #4f6b72;
+    }
+ 
+    .gradientTable tr:nth-child(odd) {
+        background: #fff;
+    }
+ 
+    .gradientTable tr:nth-child(even) {
+        background: #F5FAFA;
+    }
+    .gradientTable tr td textarea{
+        font-size:15px;
+        color:green;
+        width:99%;
+    }
+    .gradientTable tr td input{
+        outline-style: none ;
+        border: 1px solid #ccc; 
+        border-radius: 3px;
+        padding: 5px 5px;
+        width: 98%;
+        font-size: 14px;
+        font-weight: 700;
+        font-family: "Microsoft soft";
+    }
+    /*输入框点击发光效果*/
+     .gradientTable tr td input:focus{
+        border-color: #66afe9;
+        outline: 0;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6)
+    }
+     /*div.add_operator table tr td{
+           width:200px;
+       }*/
+       /*谷歌浏览器去掉input number的箭头*/
+       .gradientTable tr td input::-webkit-outer-spin-button,
+       .gradientTable tr td input::-webkit-inner-spin-button {
+           -webkit-appearance: none !important;
+            margin: 0;
+       }
+    </style>
+    <script>
+        var cityList = new Array();
+        cityList["北京市"] = ["朝阳区", "东城区", "西城区", "海淀区", "宣武区", "丰台区", "怀柔", "延庆", "房山"];
+        cityList["上海市"] = ["宝山区", "长宁区", "丰贤区", "虹口区", "黄浦区", "青浦区", "南汇区", "徐汇区", "卢湾区"];
+        cityList["河南省"] = ["郑州市", "三门峡", "焦作", "洛阳", "驻马店", "平顶山", "开封", "新乡", "安阳", "信阳", "漯河"]
+        cityList['广州省'] = ['广州市', '惠州市', '汕头市', '珠海市', '佛山市', '中山市', '东莞市'];
+        cityList['深圳市'] = ['福田区', '罗湖区', '盐田区', '宝安区', '龙岗区', '南山区', '深圳周边'];
+        cityList['重庆市'] = ['俞中区', '南岸区', '江北区', '沙坪坝区', '九龙坡区', '渝北区', '大渡口区', '北碚区'];
+        cityList['天津市'] = ['和平区', '河西区', '南开区', '河北区', '河东区', '红桥区', '塘古区', '开发区'];
+        cityList['江苏省'] = ['南京市', '苏州市', '无锡市'];
+        cityList['浙江省'] = ['杭州市', '宁波市', '温州市'];
+        cityList['四川省'] = ['四川省', '成都市'];
+        cityList['海南省'] = ['海口市'];
+        cityList['福建省'] = ['福州市', '厦门市', '泉州市', '漳州市'];
+        cityList['山东省'] = ['济南市', '青岛市', '烟台市'];
+        cityList['江西省'] = ['江西省', '南昌市'];
+        cityList['广西省'] = ['柳州市', '南宁市'];
+        cityList['安徽省'] = ['安徽省', '合肥市'];
+        cityList['河北省'] = ['邯郸市', '石家庄市'];
+        cityList['湖北省'] = ['武汉市', '宜昌市'];
+        cityList['湖南省'] = ['湖南省', '长沙市'];
+        cityList['陕西省'] = ['陕西省', '西安市'];
+        cityList['山西省'] = ['山西省', '太原市'];
+        cityList['黑龙江省'] = ['黑龙江省', '哈尔滨市'];
+        cityList['其他'] = ['其他'];
+
+
+        function changecity() {
+            var province = document.getElementById("selprovince").value;
+            var city = document.getElementById("selcity");
+            city.options.length = 0;  //清除当前city中的选项
+            for (var i in cityList) {
+                if (i == province) {
+                    for (var j in cityList[i]) {
+                        city.add(new Option(cityList[i][j], cityList[i][j]), null);
+                    }
+                }
+            }
+        }
+
+        function allCity() {
+            var province = document.getElementById("selprovince");
+            for (var i in cityList) {
+                province.add(new Option(i, i), null);
+            }
+        }
+        window.onload = allCity;
+    </script>
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo_info">
+            <img src="./images/logo.png" alt="logo">
+            <span class="platform_name">信达</span>
+        </div>
+        <ul class="user_info">
+            <li><a href="operator_product.html"><i class="fa fa-cog fa-fw"></i>服务管理</a></li>
+            <li><i class="fa fa-cube fa-fw"></i>业务管理</li>
+            <li>
+                <img src="./images/default_user.png">
+                <span>用户名字</span>
+                <i class="fa fa-chevron-down fa-fw user-arrow-down"></i>
+                <ul class="dropdown">
+                    <li>更改信息</li>
+                    <li>退出登录</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="main">
+        <ul class="main-nav">
+            <li>
+                <a href="operator_orderform.html">
+                    <i class="fa fa-shopping-cart fa-fw"></i>
+                    <p>订单</p>
+                </a>
+            </li>
+            <li>
+                <a href="operator_user.html">
+                    <i class="fa fa-user fa-fw"></i>
+                    <p>用户</p>
+                </a>
+            </li>
+            <li>
+                <a href="operator_facilitator.html">
+                    <i class="fa fa-tasks fa-fw"></i>
+                    <p>服务商</p>
+                </a>
+            </li>
+            <li>
+                <a href="operator_expenses.html">
+                    <i class="fa fa-cny fa-fw"></i>
+                    <p>费用中心</p>
+                </a>
+            </li>
+            <li>
+                <a href="operator_recommend.html">
+                    <i class="fa fa-star fa-fw"></i>
+                    <p>优质推荐</p>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa fa-bar-chart-o fa-fw"></i>
+                    <p>统计分析</p>
+                </a>
+            </li>
+        </ul>
+        
+        <!--服务商用户
+            服务商用户id  服务商头像  服务商名称  服务商地区 服务商电话 服务商密码 给管理员看的服务商简介 服务商登录状态
+            邮箱          创建时间    给用户看的服务商简介 工作时间 QQ 微信 客服电话 营业执照-->
+            <form>
+                <table class="gradientTable">
+                   <caption>添加服务商</caption>
+                <tbody>
+                    <tr>
+                        <th>服务商用户id:</th>
+                        <td><input type="text" name="operatorId" /></td>
+                    </tr>
+                    <tr>
+                        <th>服务商头像:</th>
+                        <td><input type="file" name="operatorHead"/></td>
+                    </tr>
+                    <tr>
+                        <th>服务商名称:</th>
+                        <td><input type="text" name="operatorName"/></td>
+                    </tr>
+                    <tr>
+                        <th>服务商地区:</th>
+                        <td>
+                            <select id="selprovince" onchange="changecity()" style="width:100px">
+                              <option>--选择省份--</option>
+                            </select>
+                            <select id="selcity" style="width:100px">
+                                <option>--选择城市--</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>服务商电话:</th>
+                        <td><input type="number" name="operatorNum"/></td>
+                    </tr>
+                    <tr>
+                        <th>服务商密码:</th>
+                        <td><input type="password" name="operatorPw"/></td>
+                    </tr>
+                    <tr>
+                        <th>给管理员看的服务商简介:</th>
+                        <td><textarea></textarea></td>
+                    </tr>
+                    <tr>
+                        <th>服务商登录状态</th>
+                        <td>????????</td>
+                    </tr>
+                    <tr>
+                        <th>邮箱:</th>
+                        <td><input type="email" name="operatorEmail" /></td>
+                    </tr>
+                    <tr>
+                        <th>创建时间:</th>
+                        <td>???????????</td>
+                    </tr>
+                    <tr>
+                        <th>给用户看的服务商简介:</th>
+                        <td><textarea></textarea></td>
+                    </tr>
+                    <tr>
+                        <th>工作时间:</th>
+                        <td><input type="text" name="workTime"/></td>
+                    </tr>
+                    <tr>
+                        <th>QQ:</th>
+                        <td><input type="number" name="qq"/></td>
+                    </tr>
+                    <tr>
+                        <th>微信:</th>
+                        <td><input type="text" name="wechat"/></td>
+
+                    </tr>
+                    <tr>
+                        <th>客服电话:</th>
+                        <td><input type="number" name="phone"/></td>
+                    </tr>
+                    <tr>
+                        <th>营业执照:</th>
+                        <td><input type="file" name="business" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><input type="submit" value="提交" style="width:15%"/></td>
+                    </tr>
+                </tbody>
+            </table>
+            </form>
+        </div>
+    <script src="./js/operator_product.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.MemberMapper">
+  <resultMap id="BaseResultMap" type="com.example.model.Member">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="GENDER" jdbcType="INTEGER" property="gender" />
+    <result column="ORDER_num" jdbcType="INTEGER" property="orderNum" />
+    <result column="CONSUME" jdbcType="INTEGER" property="consume" />
+    <result column="CELLPHONE" jdbcType="VARCHAR" property="cellphone" />
+    <result column="PASSWORD" jdbcType="VARCHAR" property="password" />
+    <result column="REGISTER_TIME" jdbcType="DATE" property="registerTime" />
+    <result column="EMAIL" jdbcType="VARCHAR" property="email" />
+    <result column="STATUS" jdbcType="INTEGER" property="status" />
+    <result column="REGION" jdbcType="VARCHAR" property="region" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.example.model.Member">
+    <result column="HEAD_IMG" jdbcType="LONGVARBINARY" property="headImg" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    ID, NAME, GENDER, ORDER_num, CONSUME, CELLPHONE, PASSWORD, REGISTER_TIME, EMAIL, 
+    STATUS, REGION
+  </sql>
+  <sql id="Blob_Column_List">
+    HEAD_IMG
+  </sql>
+  <!--  -->
+  
+  <select id="memberLogin" parameterType="map" resultType="com.example.model.Member">
+  	select * from member where 1 = 1 
+  	<if test="cellphone != null and cellphone !=''">
+  		and cellphone=#{cellphone,jdbcType=VARCHAR}
+  	</if>
+  	<if test="password != null and password != ''">
+  		and password=#{password,jdbcType=VARCHAR}<!-- 后面的password为参数 -->
+  	</if>
+  </select>
+  <update id="saveUserImg" parameterType="com.example.model.Member" >
+    update member set HEAD_IMG = #{headImg} where id = #{id}
+  </update>
+  
+  <select id="selectByCellPhone" parameterType="java.lang.String" resultType="com.example.model.Member">
+  	SELECT * FROM member WHERE cellphone = #{cellphone}
+  </select>
+  <!--  -->
+  <select id="selectByExampleWithBLOBs" parameterType="com.example.model.MemberExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from member
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.example.model.MemberExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from member
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from member
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from member
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.example.model.MemberExample">
+    delete from member
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.example.model.Member">
+    insert into member (ID, NAME, GENDER, 
+      ORDER_num, CONSUME, CELLPHONE, 
+      PASSWORD, REGISTER_TIME, EMAIL, 
+      STATUS, REGION, HEAD_IMG
+      )
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{gender,jdbcType=INTEGER}, 
+      #{orderNum,jdbcType=INTEGER}, #{consume,jdbcType=INTEGER}, #{cellphone,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{registerTime,jdbcType=DATE}, #{email,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER}, #{region,jdbcType=VARCHAR}, #{headImg,jdbcType=LONGVARBINARY}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.model.Member">
+    insert into member
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="gender != null">
+        GENDER,
+      </if>
+      <if test="orderNum != null">
+        ORDER_num,
+      </if>
+      <if test="consume != null">
+        CONSUME,
+      </if>
+      <if test="cellphone != null">
+        CELLPHONE,
+      </if>
+      <if test="password != null">
+        PASSWORD,
+      </if>
+      <if test="registerTime != null">
+        REGISTER_TIME,
+      </if>
+      <if test="email != null">
+        EMAIL,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="region != null">
+        REGION,
+      </if>
+      <if test="headImg != null">
+        HEAD_IMG,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        #{gender,jdbcType=INTEGER},
+      </if>
+      <if test="orderNum != null">
+        #{orderNum,jdbcType=INTEGER},
+      </if>
+      <if test="consume != null">
+        #{consume,jdbcType=INTEGER},
+      </if>
+      <if test="cellphone != null">
+        #{cellphone,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="registerTime != null">
+        #{registerTime,jdbcType=DATE},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="region != null">
+        #{region,jdbcType=VARCHAR},
+      </if>
+      <if test="headImg != null">
+        #{headImg,jdbcType=LONGVARBINARY},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.example.model.MemberExample" resultType="java.lang.Long">
+    select count(*) from member
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update member
+    <set>
+      <if test="record.id != null">
+        ID = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null">
+        NAME = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.gender != null">
+        GENDER = #{record.gender,jdbcType=INTEGER},
+      </if>
+      <if test="record.orderNum != null">
+        ORDER_num = #{record.orderNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.consume != null">
+        CONSUME = #{record.consume,jdbcType=INTEGER},
+      </if>
+      <if test="record.cellphone != null">
+        CELLPHONE = #{record.cellphone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.password != null">
+        PASSWORD = #{record.password,jdbcType=VARCHAR},
+      </if>
+      <if test="record.registerTime != null">
+        REGISTER_TIME = #{record.registerTime,jdbcType=DATE},
+      </if>
+      <if test="record.email != null">
+        EMAIL = #{record.email,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null">
+        STATUS = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.region != null">
+        REGION = #{record.region,jdbcType=VARCHAR},
+      </if>
+      <if test="record.headImg != null">
+        HEAD_IMG = #{record.headImg,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update member
+    set ID = #{record.id,jdbcType=VARCHAR},
+      NAME = #{record.name,jdbcType=VARCHAR},
+      GENDER = #{record.gender,jdbcType=INTEGER},
+      ORDER_num = #{record.orderNum,jdbcType=INTEGER},
+      CONSUME = #{record.consume,jdbcType=INTEGER},
+      CELLPHONE = #{record.cellphone,jdbcType=VARCHAR},
+      PASSWORD = #{record.password,jdbcType=VARCHAR},
+      REGISTER_TIME = #{record.registerTime,jdbcType=DATE},
+      EMAIL = #{record.email,jdbcType=VARCHAR},
+      STATUS = #{record.status,jdbcType=INTEGER},
+      REGION = #{record.region,jdbcType=VARCHAR},
+      HEAD_IMG = #{record.headImg,jdbcType=LONGVARBINARY}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update member
+    set ID = #{record.id,jdbcType=VARCHAR},
+      NAME = #{record.name,jdbcType=VARCHAR},
+      GENDER = #{record.gender,jdbcType=INTEGER},
+      ORDER_num = #{record.orderNum,jdbcType=INTEGER},
+      CONSUME = #{record.consume,jdbcType=INTEGER},
+      CELLPHONE = #{record.cellphone,jdbcType=VARCHAR},
+      PASSWORD = #{record.password,jdbcType=VARCHAR},
+      REGISTER_TIME = #{record.registerTime,jdbcType=DATE},
+      EMAIL = #{record.email,jdbcType=VARCHAR},
+      STATUS = #{record.status,jdbcType=INTEGER},
+      REGION = #{record.region,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.model.Member">
+    update member
+    <set>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        GENDER = #{gender,jdbcType=INTEGER},
+      </if>
+      <if test="orderNum != null">
+        ORDER_num = #{orderNum,jdbcType=INTEGER},
+      </if>
+      <if test="consume != null">
+        CONSUME = #{consume,jdbcType=INTEGER},
+      </if>
+      <if test="cellphone != null">
+        CELLPHONE = #{cellphone,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        PASSWORD = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="registerTime != null">
+        REGISTER_TIME = #{registerTime,jdbcType=DATE},
+      </if>
+      <if test="email != null">
+        EMAIL = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="region != null">
+        REGION = #{region,jdbcType=VARCHAR},
+      </if>
+      <if test="headImg != null">
+        HEAD_IMG = #{headImg,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.example.model.Member">
+    update member
+    set NAME = #{name,jdbcType=VARCHAR},
+      GENDER = #{gender,jdbcType=INTEGER},
+      ORDER_num = #{orderNum,jdbcType=INTEGER},
+      CONSUME = #{consume,jdbcType=INTEGER},
+      CELLPHONE = #{cellphone,jdbcType=VARCHAR},
+      PASSWORD = #{password,jdbcType=VARCHAR},
+      REGISTER_TIME = #{registerTime,jdbcType=DATE},
+      EMAIL = #{email,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=INTEGER},
+      REGION = #{region,jdbcType=VARCHAR},
+      HEAD_IMG = #{headImg,jdbcType=LONGVARBINARY}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.model.Member">
+    update member
+    set NAME = #{name,jdbcType=VARCHAR},
+      GENDER = #{gender,jdbcType=INTEGER},
+      ORDER_num = #{orderNum,jdbcType=INTEGER},
+      CONSUME = #{consume,jdbcType=INTEGER},
+      CELLPHONE = #{cellphone,jdbcType=VARCHAR},
+      PASSWORD = #{password,jdbcType=VARCHAR},
+      REGISTER_TIME = #{registerTime,jdbcType=DATE},
+      EMAIL = #{email,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=INTEGER},
+      REGION = #{region,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>
